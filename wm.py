@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# To compile use: pyinstaller --onefile wm.py
 
 import sys
 import argparse
@@ -6,15 +7,34 @@ from PIL import Image
 import numpy as np
 from multiprocessing import Pool, cpu_count
 
-WATERMARK_PATH = "/home/ttys9/watermark/logoPN.png"
-
 def parallel_process(func, data):
     with Pool(cpu_count()) as pool:
         pool.map(func, data)
 
-def add_watermark(image_path, watermark_path=WATERMARK_PATH):
-    image = Image.open(image_path).convert("RGBA")
-    watermark = Image.open(watermark_path).convert("RGBA")
+def crop_to_square(image):
+    width, height = image.size
+    new_size = min(width, height)
+    left = (width - new_size) / 2
+    top = (height - new_size) / 2
+    right = (width + new_size) / 2
+    bottom = (height + new_size) / 2
+    return image.crop((left, top, right, bottom))
+
+def add_watermark(image_path, watermark_path, instagram_format=False):
+    try:
+        image = Image.open(image_path).convert("RGBA")
+    except (OSError, IOError) as e:
+        print(f"Error opening image {image_path}: {e}")
+        return
+    
+    if instagram_format:
+        image = crop_to_square(image)
+    
+    try:
+        watermark = Image.open(watermark_path).convert("RGBA")
+    except (OSError, IOError) as e:
+        print(f"Error opening watermark {watermark_path}: {e}")
+        return
     
     # Get the image dimensions
     image_width, image_height = image.size
@@ -56,26 +76,33 @@ def add_watermark(image_path, watermark_path=WATERMARK_PATH):
 
     # Save the resulting image
     watermarked_image_path = f"watermarked_{image_path}"
-    transparent.save(watermarked_image_path, "JPEG")
-    print(f"Saved watermarked image as {watermarked_image_path}")
+    try:
+        transparent.save(watermarked_image_path, "JPEG")
+        print(f"Saved watermarked image as {watermarked_image_path}")
+    except (OSError, IOError) as e:
+        print(f"Error saving watermarked image {watermarked_image_path}: {e}")
 
-def watermark_image(image_path):
-    add_watermark(image_path, WATERMARK_PATH)
+def watermark_image(args):
+    image_path, watermark_path, instagram_format = args
+    add_watermark(image_path, watermark_path, instagram_format)
 
-def process_images(image_paths):
-    from lib_cpu import parallel_process
-    parallel_process(watermark_image, image_paths)
+def process_images(image_paths, watermark_path, instagram_format=False):
+    # Prepare arguments for watermark_image function
+    args = [(path, watermark_path, instagram_format) for path in image_paths]
+    parallel_process(watermark_image, args)
 
 def main():
     parser = argparse.ArgumentParser(description="Watermarking program. By Pablo Niklas <pablo.niklas@gmail.com>")
+    parser.add_argument("watermark", help="Path to the watermark image")
     parser.add_argument("images", nargs="*", help="List of image files to watermark")
+    parser.add_argument("--instagram", action="store_true", help="Format images for Instagram (crop to square)")
     args = parser.parse_args()
     
     if not args.images:
         parser.print_help()
         sys.exit(1)
 
-    process_images(args.images)
+    process_images(args.images, args.watermark, args.instagram)
 
 if __name__ == "__main__":
     main()
