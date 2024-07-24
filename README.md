@@ -32,13 +32,13 @@ El script se utiliza desde la línea de comandos y acepta los siguientes argumen
 Aplicar una marca de agua a imágenes sin formateo para Instagram:
 
 ```bash
-./your_script.py --watermark /ruta/a/tu/marca_de_agua.png imagen1.jpg imagen2.jpg
+./wm.py --watermark /ruta/a/tu/marca_de_agua.png imagen1.jpg imagen2.jpg
 ```
 
 Aplicar una marca de agua a imágenes y formatear para Instagram (recortar a cuadrado):
 
 ```bash
-./your_script.py --watermark /ruta/a/tu/marca_de_agua.png --instagram imagen1.jpg imagen2.jpg
+./wm.py --watermark /ruta/a/tu/marca_de_agua.png --instagram imagen1.jpg imagen2.jpg
 ```
 
 ## Validaciones
@@ -50,7 +50,7 @@ El script valida que el archivo de marca de agua especificado exista y sea un ar
 Asegúrate de que el script tiene permisos de ejecución. Puedes hacer esto con el siguiente comando:
 
 ```bash
-chmod +x your_script.py
+chmod +x wm.py
 ```
 
 Luego, ejecuta el script con los argumentos adecuados según sea necesario.
