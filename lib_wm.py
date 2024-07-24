@@ -17,13 +17,13 @@ def add_watermark(image_path, watermark_path=WATERMARK_PATH):
     # Create an alpha mask for the watermark to make it 70% transparent
     watermark_alpha = watermark.split()[3]
     alpha = np.array(watermark_alpha)
-    alpha = alpha * 0.5
+    alpha = alpha * 0.7
     watermark_alpha = Image.fromarray(alpha.astype('uint8'))
     watermark.putalpha(watermark_alpha)
 
-    # Position the watermark at the bottom right corner
+    # Position the watermark closer to the bottom right corner
     watermark_width, watermark_height = watermark.size
-    position = (image_width - watermark_width - 10, image_height - watermark_height - 10)
+    position = (image_width - watermark_width - 5, image_height - watermark_height - 5)
 
     # Combine images
     transparent = Image.new('RGBA', (image_width, image_height), (0, 0, 0, 0))
