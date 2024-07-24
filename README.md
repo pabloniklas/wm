@@ -1,4 +1,5 @@
 # Watermarking Script
+<img src=https://img.shields.io/github/license/pabloniklas/wm> <img src=https://img.shields.io/github/languages/top/pabloniklas/wm>
 
 ## Descripción
 
