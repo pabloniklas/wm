@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import sys
+import argparse
 from PIL import Image
 import numpy as np
 from multiprocessing import Pool, cpu_count
@@ -66,12 +67,15 @@ def process_images(image_paths):
     parallel_process(watermark_image, image_paths)
 
 def main():
-    image_files = sys.argv[1:]
-    if not image_files:
-        print("Usage: wm <list of image files>")
+    parser = argparse.ArgumentParser(description="Watermarking program. By Pablo Niklas <pablo.niklas@gmail.com>")
+    parser.add_argument("images", nargs="*", help="List of image files to watermark")
+    args = parser.parse_args()
+    
+    if not args.images:
+        parser.print_help()
         sys.exit(1)
 
-    process_images(image_files)
+    process_images(args.images)
 
 if __name__ == "__main__":
     main()
