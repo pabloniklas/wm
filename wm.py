@@ -50,7 +50,13 @@ def add_watermark(image_path, watermark_path, instagram_format=False):
     if watermark_width > max_allowed_size or watermark_height > max_allowed_size:
         scale_factor = min(max_allowed_size / watermark_width, max_allowed_size / watermark_height)
         new_watermark_size = (int(watermark_width * scale_factor), int(watermark_height * scale_factor))
-        watermark = watermark.resize(new_watermark_size, Image.ANTIALIAS)
+        try:
+            resample_filter = Image.Resampling.LANCZOS
+        except AttributeError:
+            resample_filter = Image.ANTIALIAS
+
+        watermark = watermark.resize(new_watermark_size, resample_filter)
+
     else:
         new_watermark_size = (watermark_width, watermark_height)
     
